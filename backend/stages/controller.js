@@ -1,4 +1,4 @@
-const Stages = require('./model')
+const { Stages } = require('./model')
 
 const getStages = async (req, res) => {
   try {

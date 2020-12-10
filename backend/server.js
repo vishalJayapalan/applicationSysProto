@@ -20,8 +20,8 @@ mongoose.connect(uri, {
 const stageRoute = require('./stages/router')
 const userRoute = require('./user/router')
 
-app.use('/', stageRoute)
 app.use('/user', userRoute)
+app.use('/stage', stageRoute)
 
 mongoose.connection
   .once('open', () => {

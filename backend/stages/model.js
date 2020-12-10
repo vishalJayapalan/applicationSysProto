@@ -8,4 +8,10 @@ const StageSchema = new Schema(
   { strict: false }
 )
 
-module.exports = mongoose.model('Stage', StageSchema)
+const Stages = mongoose.model('Stage', StageSchema)
+
+// module.exports = mongoose.model('Stage', StageSchema)
+module.exports = {
+  Stages,
+  StageSchema
+}
