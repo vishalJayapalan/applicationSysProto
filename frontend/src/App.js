@@ -17,7 +17,9 @@ function App () {
       setCurrentStageIndex(json.currentStageIndex)
       setTotalStages(json.totalStages)
       setLabels(
-        Object.keys(json).filter(key => key !== '_id' || key !== 'stageName')
+        Object.keys(json.user.currentStage).filter(
+          key => key !== '_id' && key !== 'stageName' && key !== '__v'
+        )
       )
       setCurrentStage(json.user.currentStage)
     }
@@ -29,23 +31,28 @@ function App () {
 
   const stageSubmit = async event => {
     event.preventDefault()
+    console.log('stageName', users.currentStage.stageName)
     const updateUser = await window.fetch('http://localhost:5000/user', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({
-        currentStageName: 'Stage-5',
+        currentStageName: users.currentStage.stageName,
         fullName: 'vishal Jayapalan'
-      })
-      // WORKING HERE
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
     const json = await updateUser.json()
     console.log('UPDated json', json)
-    // setUsers(json.users)
-    // setLabels(
-    //   Object.keys(json).filter(key => key !== '_id' || key !== 'stageName')
-    // )
-    // setCurrentStage(json.user.currentStage)
-
-    // console.log('inhere')
+    setUsers(json.user)
+    setCurrentStageIndex(json.currentStageIndex)
+    setTotalStages(json.totalStages)
+    setLabels(
+      Object.keys(json.user.currentStage).filter(
+        key => key !== '_id' && key !== 'stageName' && key !== '__v'
+      )
+    )
+    setCurrentStage(json.user.currentStage)
   }
 
   return (

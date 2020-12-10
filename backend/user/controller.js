@@ -4,9 +4,7 @@ const { Stages } = require('../stages/model')
 const getUser = async (req, res) => {
   try {
     const stages = await Stages.find()
-    console.log('stagesLength', stages.length)
     const user = await User.find()
-    console.log('user', user)
     let index = 0
     for (let i = 0; i < stages.length; i++) {
       if (stages[i].stageName === user[0].currentStage.stageName) {
@@ -14,17 +12,13 @@ const getUser = async (req, res) => {
       }
       index++
     }
-    console.log('userCurrentStage', index + 1)
 
-    return res
-      .status(200)
-      .json({
-        user: user[0],
-        totalStages: stages.length,
-        currentStageIndex: index + 1
-      })
+    return res.status(200).json({
+      user: user[0],
+      totalStages: stages.length,
+      currentStageIndex: index + 1
+    })
   } catch (err) {
-    console.log(err)
     return res
       .status(500)
       .json({ message: 'There was an error. Please try again later' })
@@ -43,7 +37,6 @@ const createUser = async (req, res) => {
     await user.save()
     return res.status(201).json({ userId: user._id })
   } catch (err) {
-    // console.log(err)
     return res
       .status(500)
       .json({ message: 'There was an error. Please try again later' })
@@ -53,10 +46,9 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { currentStageName } = req.body
+
     const user = await User.findOne({ userName: 'Admin User' })
     const stages = await Stages.find()
-    // console.log('USER', user)
-    // console.log('STAGE', stages)
     let index = 0
     for (let i = 0; i < stages.length; i++) {
       if (stages[i].stageName === user.currentStage.stageName) {
@@ -64,19 +56,18 @@ const updateUser = async (req, res) => {
       }
       index++
     }
-
     if (currentStageName === user.currentStage.stageName) {
       for (const [key, value] of Object.entries(req.body)) {
-        user.currentStage[key] = value
-        // if (Object.keys(user.currentStage).includes(key)) {
-        // }
+        if (key !== currentStageName) user.currentStage[key] = value
       }
-      console.log(user)
       user.finishedStages.push(user.currentStage)
-      // console.log(stages[index + 1])
       user.currentStage = stages[++index]
       await user.save()
-      return res.status(200).json(user)
+      return res.status(200).json({
+        user,
+        totalStages: stages.length,
+        currentStageIndex: index + 1
+      })
     } else {
       return res.status(400).json({ Msg: 'User Not autherized to change this' })
     }
