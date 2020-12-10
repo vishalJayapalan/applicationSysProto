@@ -27,10 +27,21 @@ function App () {
     event.preventDefault()
     const updateUser = await window.fetch('http://localhost:5000/user', {
       method: 'POST',
-      body: JSON.stringify()
+      body: JSON.stringify({
+        currentStageName: 'Stage-5',
+        fullName: 'vishal Jayapalan'
+      })
       // WORKING HERE
     })
-    console.log('inhere')
+    const json = await updateUser.json()
+    console.log('UPDated json', json)
+    // setUsers(json.users)
+    // setLabels(
+    //   Object.keys(json).filter(key => key !== '_id' || key !== 'stageName')
+    // )
+    // setCurrentStage(json.user.currentStage)
+
+    // console.log('inhere')
   }
 
   return (

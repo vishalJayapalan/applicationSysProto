@@ -1,7 +1,5 @@
 const User = require('./model')
 const { Stages } = require('../stages/model')
-const { findOne, findById } = require('./model')
-const { STATES } = require('mongoose')
 
 const getUser = async (req, res) => {
   try {
@@ -35,21 +33,39 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    const { currentStageName } = req.body
     const user = await User.findOne({ userName: 'Admin User' })
     const stages = await Stages.find()
-    // console.log(user)
-    for (const [key, value] of Object.entries(req.body)) {
-      // console.log('STAGES', stages)
-      // console.log(Object.keys(user.currentStage))
-      // console.log(Object.keys(stages).includes(key))
-      if (Object.keys(user.currentStage).includes(key)) {
-        // console.log('inhere')
-        // console.log(key, value)
+    // console.log('USER', user)
+    // console.log('STAGE', stages)
+    let index = 0
+    for (let i = 0; i < stages.length; i++) {
+      if (stages[i].stageName === user.currentStage.stageName) {
+        // console.log('inHere')
+        // console.log('index')
+        break
       }
-      // user[key] = value
+      index++
+      console.log(index)
     }
-    res.status(200)
+
+    if (currentStageName === user.currentStage.stageName) {
+      for (const [key, value] of Object.entries(req.body)) {
+        user.currentStage[key] = value
+        // if (Object.keys(user.currentStage).includes(key)) {
+        // }
+      }
+      console.log(user)
+      user.finishedStages.push(user.currentStage)
+      // console.log(stages[index + 1])
+      user.currentStage = stages[++index]
+      await user.save()
+      return res.status(200).json(user)
+    } else {
+      return res.status(400).json({ Msg: 'User Not autherized to change this' })
+    }
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
       .json({ message: 'There was an error. Please try again later' })
