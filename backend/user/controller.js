@@ -5,8 +5,11 @@ const getUser = async (req, res) => {
   try {
     const stages = await Stages.find()
     const user = await User.find()
+    // console.log(stages)
+    // console.log(user)
     let index = 0
     for (let i = 0; i < stages.length; i++) {
+      // console.log('TEST', user[0])
       if (stages[i].stageName === user[0].currentStage.stageName) {
         break
       }
@@ -19,6 +22,7 @@ const getUser = async (req, res) => {
       currentStageIndex: index + 1
     })
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
       .json({ message: 'There was an error. Please try again later' })
@@ -46,7 +50,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { currentStageName } = req.body
-
+    console.log(req.body)
     const user = await User.findOne({ userName: 'Admin User' })
     const stages = await Stages.find()
     let index = 0

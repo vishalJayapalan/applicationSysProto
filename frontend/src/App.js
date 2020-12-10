@@ -8,10 +8,12 @@ function App () {
   const [currentStage, setCurrentStage] = useState([])
   const [labels, setLabels] = useState([])
 
+  let entries = {}
+
   const getUserDetails = async () => {
     const response = await window.fetch('http://localhost:5000/user')
     const json = await response.json()
-    console.log(json)
+    // console.log(json)
     if (response.ok) {
       setUsers(json.user)
       setCurrentStageIndex(json.currentStageIndex)
@@ -31,13 +33,17 @@ function App () {
 
   const stageSubmit = async event => {
     event.preventDefault()
-    console.log('stageName', users.currentStage.stageName)
+    // console.log('stageName', users.currentStage.stageName)
     const updateUser = await window.fetch('http://localhost:5000/user', {
       method: 'PUT',
       body: JSON.stringify({
-        currentStageName: users.currentStage.stageName,
-        fullName: 'vishal Jayapalan'
+        ...entries,
+        currentStageName: users.currentStage.stageName
       }),
+      // body: JSON.stringify({
+      //   currentStageName: users.currentStage.stageName,
+      //   fullName: 'vishal Jayapalan'
+      // }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -55,6 +61,10 @@ function App () {
     setCurrentStage(json.user.currentStage)
   }
 
+  function updateEntry (inputEntry, entry) {
+    entries[entry] = inputEntry
+  }
+
   return (
     <div className='App'>
       <div className='stageContainer'>
@@ -69,7 +79,7 @@ function App () {
             {/* <fieldset className='fieldset'> */}
             {/* <legend>Personalia:</legend> */}
             {labels.map(entry => (
-              <Entries entry={entry} />
+              <Entries entry={entry} updateEntry={updateEntry} />
             ))}
             <div className='formRow'>
               <button type='submit'>Submit</button>
