@@ -23,17 +23,35 @@ function App () {
     getUserDetails()
   }, [])
 
+  const stageSubmit = async event => {
+    event.preventDefault()
+    const updateUser = await window.fetch('http://localhost:5000/user', {
+      method: 'POST',
+      body: JSON.stringify()
+      // WORKING HERE
+    })
+    console.log('inhere')
+  }
+
   return (
     <div className='App'>
       <div className='stageContainer'>
-        <form>
-          <fieldset className='fieldset'>
+        <div className='formContainer'>
+          <div className='titleContainer'>
+            <h1 className='title'>{currentStage.stageName}</h1>
+          </div>
+          <form onSubmit={stageSubmit}>
+            {/* <fieldset className='fieldset'> */}
+            {/* <legend>Personalia:</legend> */}
             {labels.map(entry => (
               <Entries entry={entry} />
             ))}
-            <button type='submit'>Submit</button>
-          </fieldset>
-        </form>
+            <div className='formRow'>
+              <button type='submit'>Submit</button>
+            </div>
+            {/* </fieldset> */}
+          </form>
+        </div>
       </div>
     </div>
   )
