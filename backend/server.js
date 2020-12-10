@@ -17,6 +17,12 @@ mongoose.connect(uri, {
   useCreateIndex: true
 })
 
+const stageRoute = require('./stages/router')
+const userRoute = require('./user/router')
+
+app.use('/', stageRoute)
+app.use('/user', userRoute)
+
 mongoose.connection
   .once('open', () => {
     console.log('MongoDB connection established succesfully...')
