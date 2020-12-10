@@ -3,9 +3,28 @@ const { Stages } = require('../stages/model')
 
 const getUser = async (req, res) => {
   try {
+    const stages = await Stages.find()
+    console.log('stagesLength', stages.length)
     const user = await User.find()
-    return res.status(200).json({ user: user[0] })
+    console.log('user', user)
+    let index = 0
+    for (let i = 0; i < stages.length; i++) {
+      if (stages[i].stageName === user[0].currentStage.stageName) {
+        break
+      }
+      index++
+    }
+    console.log('userCurrentStage', index + 1)
+
+    return res
+      .status(200)
+      .json({
+        user: user[0],
+        totalStages: stages.length,
+        currentStageIndex: index + 1
+      })
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
       .json({ message: 'There was an error. Please try again later' })
@@ -24,7 +43,7 @@ const createUser = async (req, res) => {
     await user.save()
     return res.status(201).json({ userId: user._id })
   } catch (err) {
-    console.log(err)
+    // console.log(err)
     return res
       .status(500)
       .json({ message: 'There was an error. Please try again later' })
@@ -41,12 +60,9 @@ const updateUser = async (req, res) => {
     let index = 0
     for (let i = 0; i < stages.length; i++) {
       if (stages[i].stageName === user.currentStage.stageName) {
-        // console.log('inHere')
-        // console.log('index')
         break
       }
       index++
-      console.log(index)
     }
 
     if (currentStageName === user.currentStage.stageName) {

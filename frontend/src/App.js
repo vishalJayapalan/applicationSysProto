@@ -3,6 +3,8 @@ import Entries from './components/Entries'
 
 function App () {
   const [users, setUsers] = useState([])
+  const [totalStages, setTotalStages] = useState(0)
+  const [currentStageIndex, setCurrentStageIndex] = useState(0)
   const [currentStage, setCurrentStage] = useState([])
   const [labels, setLabels] = useState([])
 
@@ -12,6 +14,8 @@ function App () {
     console.log(json)
     if (response.ok) {
       setUsers(json.user)
+      setCurrentStageIndex(json.currentStageIndex)
+      setTotalStages(json.totalStages)
       setLabels(
         Object.keys(json).filter(key => key !== '_id' || key !== 'stageName')
       )
@@ -50,6 +54,9 @@ function App () {
         <div className='formContainer'>
           <div className='titleContainer'>
             <h1 className='title'>{currentStage.stageName}</h1>
+            <h1>
+              {currentStageIndex}/{totalStages}
+            </h1>
           </div>
           <form onSubmit={stageSubmit}>
             {/* <fieldset className='fieldset'> */}
