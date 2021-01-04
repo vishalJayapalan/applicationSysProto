@@ -14,15 +14,22 @@ export default function Entries ({ entry, updateEntry }) {
         <input
           type='text'
           name={`${entry.fieldName}`}
-          onChange={e => updateEntry(e.target.value, entry)}
+          onChange={e => updateEntry(e.target.value, entry.fieldName)}
         ></input>
       )}
       {entry.fieldType === 'select' && (
-        <select>
-          {entry.options.map(option => (
-            <option>{option}</option>
+        <select onChange={e => updateEntry(e.target.value, entry.fieldName)}>
+          {entry.options.map((option, index) => (
+            <option key={index}>{option}</option>
           ))}
         </select>
+      )}
+      {entry.fieldType === 'image' && (
+        <input
+          type='file'
+          name={`${entry.fieldName}`}
+          onChange={e => updateEntry(e.target.value, entry.fieldName)}
+        ></input>
       )}
     </div>
   )

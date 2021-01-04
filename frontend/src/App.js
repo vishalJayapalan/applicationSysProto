@@ -21,7 +21,7 @@ function App () {
       setUsers(json.user)
       setCurrentStageIndex(json.currentStageIndex)
       setTotalStages(json.totalStages)
-      console.log('Fields', json.user.currentStage.fields)
+      // console.log('Fields', json.user.currentStage.fields)
       setLabels(json.user.currentStage.fields)
       setCurrentStage(json.user.currentStage)
     }
@@ -32,18 +32,12 @@ function App () {
   }, [])
 
   const stageSubmit = async event => {
-    // event.preventDefault()
-    // console.log('stageName', users.currentStage.stageName)
     const updateUser = await window.fetch('http://localhost:5000/user', {
       method: 'PUT',
       body: JSON.stringify({
         ...entries,
-        currentStageName: users.currentStage.stageName
+        stageName: users.currentStage.stageName
       }),
-      // body: JSON.stringify({
-      //   currentStageName: users.currentStage.stageName,
-      //   fullName: 'vishal Jayapalan'
-      // }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -55,21 +49,18 @@ function App () {
     setCurrentStageIndex(json.currentStageIndex)
     setTotalStages(json.totalStages)
     setLabels(json.user.currentStage.fields)
-    // setLabels(
-    //   Object.keys(json.user.currentStage).filter(
-    //     key => key !== '_id' && key !== 'stageName' && key !== '__v'
-    //   )
-    // )
     setCurrentStage(json.user.currentStage)
   }
 
   function updateEntry (inputEntry, entry) {
+    console.log(inputEntry, entry)
     entries[entry] = inputEntry
   }
 
-  return isCompleted ? (
-    <CompletionPage />
-  ) : (
+  // return isCompleted ? (
+  //   <CompletionPage />
+  // ) :
+  return (
     <div className='App'>
       <div className='stageContainer'>
         <div className='formContainer'>
@@ -80,8 +71,6 @@ function App () {
             </h1>
           </div>
           <form onSubmit={stageSubmit}>
-            {/* <fieldset className='fieldset'> */}
-            {/* <legend>Personalia:</legend> */}
             {labels.map(entry => (
               <Entries
                 entry={entry}
@@ -92,7 +81,6 @@ function App () {
             <div className='formRow'>
               <button type='submit'>Submit</button>
             </div>
-            {/* </fieldset> */}
           </form>
         </div>
       </div>
