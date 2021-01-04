@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Entries from './components/Entries'
+import CompletionPage from './components/completionPage'
 
 function App () {
   const [users, setUsers] = useState([])
@@ -7,22 +8,21 @@ function App () {
   const [currentStageIndex, setCurrentStageIndex] = useState(0)
   const [currentStage, setCurrentStage] = useState([])
   const [labels, setLabels] = useState([])
+  const [isCompleted, setIsCompleted] = useState(false)
 
   let entries = {}
 
   const getUserDetails = async () => {
     const response = await window.fetch('http://localhost:5000/user')
     const json = await response.json()
-    // console.log(json)
+    console.log('User Details', json)
     if (response.ok) {
+      setIsCompleted(json.isCompleted)
       setUsers(json.user)
       setCurrentStageIndex(json.currentStageIndex)
       setTotalStages(json.totalStages)
-      setLabels(
-        Object.keys(json.user.currentStage).filter(
-          key => key !== '_id' && key !== 'stageName' && key !== '__v'
-        )
-      )
+      console.log('Fields', json.user.currentStage.fields)
+      setLabels(json.user.currentStage.fields)
       setCurrentStage(json.user.currentStage)
     }
   }
@@ -32,7 +32,7 @@ function App () {
   }, [])
 
   const stageSubmit = async event => {
-    event.preventDefault()
+    // event.preventDefault()
     // console.log('stageName', users.currentStage.stageName)
     const updateUser = await window.fetch('http://localhost:5000/user', {
       method: 'PUT',
@@ -50,14 +50,16 @@ function App () {
     })
     const json = await updateUser.json()
     console.log('UPDated json', json)
+    setIsCompleted(json.user.isCompleted)
     setUsers(json.user)
     setCurrentStageIndex(json.currentStageIndex)
     setTotalStages(json.totalStages)
-    setLabels(
-      Object.keys(json.user.currentStage).filter(
-        key => key !== '_id' && key !== 'stageName' && key !== '__v'
-      )
-    )
+    setLabels(json.user.currentStage.fields)
+    // setLabels(
+    //   Object.keys(json.user.currentStage).filter(
+    //     key => key !== '_id' && key !== 'stageName' && key !== '__v'
+    //   )
+    // )
     setCurrentStage(json.user.currentStage)
   }
 
@@ -65,7 +67,9 @@ function App () {
     entries[entry] = inputEntry
   }
 
-  return (
+  return isCompleted ? (
+    <CompletionPage />
+  ) : (
     <div className='App'>
       <div className='stageContainer'>
         <div className='formContainer'>
@@ -79,7 +83,11 @@ function App () {
             {/* <fieldset className='fieldset'> */}
             {/* <legend>Personalia:</legend> */}
             {labels.map(entry => (
-              <Entries entry={entry} updateEntry={updateEntry} />
+              <Entries
+                entry={entry}
+                updateEntry={updateEntry}
+                key={entry._id}
+              />
             ))}
             <div className='formRow'>
               <button type='submit'>Submit</button>

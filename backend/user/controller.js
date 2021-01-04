@@ -5,11 +5,9 @@ const getUser = async (req, res) => {
   try {
     const stages = await Stages.find()
     const user = await User.find()
-    // console.log(stages)
-    // console.log(user)
     let index = 0
     for (let i = 0; i < stages.length; i++) {
-      // console.log('TEST', user[0])
+      console.log('stagees[i].stageName', stages[i].stageName)
       if (stages[i].stageName === user[0].currentStage.stageName) {
         break
       }
@@ -19,7 +17,8 @@ const getUser = async (req, res) => {
     return res.status(200).json({
       user: user[0],
       totalStages: stages.length,
-      currentStageIndex: index + 1
+      currentStageIndex: index + 1,
+      isCompleted: user[0].isCompleted
     })
   } catch (err) {
     console.log(err)
@@ -60,6 +59,16 @@ const updateUser = async (req, res) => {
       }
       index++
     }
+    if (user.finishedStages.length === stages.length) {
+      user.isCompleted = false
+      await user.save()
+      return res.status(200).json({
+        user,
+        totalStages: stages.length,
+        currentStageIndex: index + 1,
+        isCompleted: true
+      })
+    }
     if (currentStageName === user.currentStage.stageName) {
       for (const [key, value] of Object.entries(req.body)) {
         if (key !== currentStageName) user.currentStage[key] = value
@@ -70,7 +79,8 @@ const updateUser = async (req, res) => {
       return res.status(200).json({
         user,
         totalStages: stages.length,
-        currentStageIndex: index + 1
+        currentStageIndex: index + 1,
+        isCompleted: user.isCompleted
       })
     } else {
       return res.status(400).json({ Msg: 'User Not autherized to change this' })
